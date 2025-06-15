@@ -6,15 +6,14 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 
-type Props = {
-  params: { id: string };
-}
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
 
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params }: PageProps) {
   const { userId } = auth();
-
-  console.log("🧪 SERVER userId:", userId);
-
 
   // Increment view count
   await prisma.product.update({
@@ -103,8 +102,6 @@ export default async function ProductDetailPage({ params }: Props) {
               Add to Wishlist
             </button>
           </form>
-
-         
         </div>
       </div>
     </div>
