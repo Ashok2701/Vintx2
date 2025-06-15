@@ -19,14 +19,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, BellIcon, MailIcon, HeartIcon } from "lucide-react";
-import CategoryMenu from "../shared/CategoryMenu";
 
 
 export default function Navbar() {
   const [selectedLabel, setSelectedLabel] = useState("Catalog");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Search for items");
 
-  const { isSignedIn, user } = useUser();
+
   const [role, setRole] = useState("member");
 
   const pathname = usePathname();

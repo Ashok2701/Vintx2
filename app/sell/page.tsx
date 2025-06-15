@@ -2,7 +2,6 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
 import ProductForm from "@/components/product/ProductForm";
 
 export default function SellPage() {
