@@ -21,11 +21,12 @@ import {
 import { ChevronDown, BellIcon, MailIcon, HeartIcon } from "lucide-react";
 
 
+
 export default function Navbar() {
   const [selectedLabel, setSelectedLabel] = useState("Catalog");
   const [searchPlaceholder, setSearchPlaceholder] = useState("Search for items");
 
-
+  const {  user } = useUser();
   const [role, setRole] = useState("member");
 
   const pathname = usePathname();
