@@ -12,7 +12,6 @@ export default async function ProductDetailPage({
 }) {
   const { userId } = auth();
 
-  // Increment view count
   await prisma.product.update({
     where: { id: params.id },
     data: { views: { increment: 1 } },
@@ -50,15 +49,12 @@ export default async function ProductDetailPage({
   async function buyNow() {
     "use server";
     if (!userId) return redirect("/sign-in");
-
-    console.log("User wants to buy:", product.name);
     redirect("/checkout");
   }
 
   return (
     <div className="max-w-5xl mx-auto p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Product Images */}
         <div className="space-y-4">
           {product.images.map((src, i) => (
             <Image
@@ -71,8 +67,6 @@ export default async function ProductDetailPage({
             />
           ))}
         </div>
-
-        {/* Product Info */}
         <div className="space-y-4">
           <h1 className="text-2xl font-bold">{product.name}</h1>
           <p className="text-gray-600">{product.description}</p>
@@ -104,5 +98,4 @@ export default async function ProductDetailPage({
   );
 }
 
-// ✅ Ensure this route is rendered dynamically to avoid SSG type issues
 export const dynamic = "force-dynamic";
