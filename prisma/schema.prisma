@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String  @id @default(cuid())
+  clerkId String  @unique
+  email   String  @unique
+  role    String  @default("member")
+  name    String?
+  image   String?
+
+  products Product[] @relation("SellerRelation") // ✅ Matches Product.seller
+  orders   Order[]   @relation("BuyerRelation") // ✅ Matches Order.buyer
+
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id       String     @id @default(cuid())
+  name     String
+  slug     String     @unique
+  gender   String?
+  parentId String?
+  parent   Category?  @relation("CategoryToSub", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryToSub")
+
+  products Product[] @relation("CategoryToProduct") // ✅ Bidirectional
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+
+
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  images      String[]
+  views      Int      @default(0)
+  favorites  Favorite[]
+  sellerId String
+  seller   User   @relation("SellerRelation", fields: [sellerId], references: [id]) // ✅ Matches User.products
+
+  categoryId String
+  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id]) // ✅ Matches Category.products
+
+  orders Order[] @relation("ProductOrders") // ✅ Matches Order.product
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  productId String
+  product   Product @relation("ProductOrders", fields: [productId], references: [id]) // ✅ Matches Product.orders
+
+  buyerId String
+  buyer   User   @relation("BuyerRelation", fields: [buyerId], references: [id]) // ✅ Matches User.orders
+
+  createdAt DateTime @default(now())
+}
