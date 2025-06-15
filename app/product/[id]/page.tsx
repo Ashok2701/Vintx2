@@ -3,16 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
-import Link from "next/link";
 import { revalidatePath } from "next/cache";
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function ProductDetailPage({ params }: PageProps) {
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { userId } = auth();
 
   // Increment view count
