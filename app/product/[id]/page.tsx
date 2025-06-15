@@ -6,7 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 
-interface Props {
+type Props = {
   params: { id: string };
 }
 
