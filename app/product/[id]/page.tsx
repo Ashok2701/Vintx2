@@ -5,11 +5,8 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-export default async function ProductDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ProductDetailPage({params}: {  params: Promise<{ id: string }>}) 
+{
   const { userId } = auth();
 
   await prisma.product.update({
