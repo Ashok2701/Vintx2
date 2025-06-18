@@ -73,7 +73,8 @@ model Order {
 
   productId String
   product   Product @relation("ProductOrders", fields: [productId], references: [id]) // ✅ Matches Product.orders
-
+price  Float    // <-- Add this if missing or change to Float/Int
+  status String
   buyerId String
   buyer   User   @relation("BuyerRelation", fields: [buyerId], references: [id]) // ✅ Matches User.orders
 

@@ -17,13 +17,28 @@ export default async function HomePage() {
   const { userId } = auth();
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
-    cache: "no-cache",
+    cache: "no-store",
   });
+
+
+  if (!res.ok) {
+  const text = await res.text();
+  console.error("API Error:", text);
+  throw new Error("Failed to load products");
+}
 
   const products: Product[] = await res.json();
 
   console.log("user details are ", userId)
   console.log("Prpducts data  =", products)
+
+
+if (products.length === 0) {
+  return <p className="text-center text-gray-500 mt-10">No products available yet.</p>;
+}
+
+
+
   return (
     <div className="w-full">
       {/* ✅ Full-width banner */}

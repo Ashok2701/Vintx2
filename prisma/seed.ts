@@ -1,26 +1,31 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+// prisma/seed.ts
+import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/utils"; // optional utility for slugs
 
 async function main() {
-  await prisma.user.upsert({
-    where: { clerkId: "user_2xbzI9ffuvEpP68G7wwtdoXA9at" }, // Replace this!
-    update: { role: "admin" },
-    create: {
-      clerkId: "user_2xbzI9ffuvEpP68G7wwtdoXA9at",
-      role: "admin",
-      email : "admin@admin.com"
+  // Step 1: Create a parent category
+  
+
+  // Step 3: Seed a product into the subcategory
+  await prisma.product.create({
+    data: {
+      name: "Classic White Shirt",
+      description: "A crisp white shirt perfect for formal occasions.",
+      price: 999.99,
+      images: ["https://via.placeholder.com/500"],
+      sellerId : "cmbxrkqmp0000epu4qnmuyj96",
+      categoryId : "cmbxsfs8f0002epyghyuux7cn"
     },
   });
 
-  console.log("✅ Admin user seeded");
+  console.log("✅ Seeded category hierarchy and product.");
 }
 
 main()
   .catch((e) => {
-    console.error("❌ Error in seed:", e);
+    console.error("❌ Seed error:", e);
     process.exit(1);
   })
-  .finally(() => {
-    prisma.$disconnect();
+  .finally(async () => {
+    await prisma.$disconnect();
   });

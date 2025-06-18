@@ -46,11 +46,8 @@ console.log("at product api", userId)
 export async function GET() {
   try {
     const products = await prisma.product.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
-        seller: true,
-      },
+      orderBy: { createdAt: "desc" }
+    
     });
 
     return NextResponse.json(products);
