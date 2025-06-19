@@ -8,7 +8,7 @@ export async function POST(req: Request) {
     const { name, description, price, categoryId, images, sellerId } = await req.json();
 
     // Optional: Server-side auth check (if needed)
-    const { userId  } = auth();
+    const { userId  } = await auth();
   
 console.log("at product seller param", sellerId)
 //const user = await prisma.user.findUnique({ where: { userId } });
