@@ -14,7 +14,7 @@ interface Product {
 }
 
 export default async function HomePage() {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
     cache: "no-store",
