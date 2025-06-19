@@ -5,20 +5,24 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-export default async function ProductDetailPage({params}: {  params: { id: string }}) 
-{
+// ✅ This is the correct way to type the props
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { userId } = await auth();
-
-  await prisma.product.update({
-    where: { id: params.id },
-    data: { views: { increment: 1 } },
-  });
 
   const product = await prisma.product.findUnique({
     where: { id: params.id },
   });
 
   if (!product) return notFound();
+
+  await prisma.product.update({
+    where: { id: params.id },
+    data: { views: { increment: 1 } },
+  });
 
   async function addToFavorite() {
     "use server";
@@ -95,4 +99,5 @@ export default async function ProductDetailPage({params}: {  params: { id: strin
   );
 }
 
+// ✅ Forces dynamic rendering (avoids static param inference problems)
 export const dynamic = "force-dynamic";
