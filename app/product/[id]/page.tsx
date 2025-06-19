@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 
 export default async function ProductDetailPage({params}: {  params: Promise<{ id: string }>}) 
 {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   await prisma.product.update({
     where: { id: params.id },
