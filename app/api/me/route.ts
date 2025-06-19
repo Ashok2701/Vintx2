@@ -1,9 +1,9 @@
 // app/api/me/route.ts
 import { getAuth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest  } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const { userId } = getAuth(req); // ✅ THIS IS THE FIX
 
   console.log("GET /api/me userId:", userId);
