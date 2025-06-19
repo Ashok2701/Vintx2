@@ -1,8 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// 🔽 Recursive function to nest categories
-const buildTree = (categories: any[], parentId: string | null = null) => {
+// ✅ Type for category tree node
+type CategoryWithChildren = {
+  id: string;
+  name: string;
+  slug: string;
+  gender?: string | null;
+  parentId?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  children: CategoryWithChildren[];
+};
+
+// ✅ Recursive function to nest categories
+const buildTree = (
+  categories: CategoryWithChildren[],
+  parentId: string | null = null
+): CategoryWithChildren[] => {
   return categories
     .filter((cat) => cat.parentId === parentId)
     .map((cat) => ({
@@ -31,11 +46,11 @@ async function generateUniqueSlug(name: string): Promise<string> {
 // 📌 GET: Fetch categories as nested tree
 export async function GET() {
   try {
-    const flatCategories = await prisma.category.findMany({
+    const flatCategories = (await prisma.category.findMany({
       orderBy: { createdAt: "asc" },
-    });
+    })) as CategoryWithChildren[]; // safe cast to include children manually
 
-    const nested = buildTree(flatCategories, null);
+    const nested = buildTree(flatCategories);
     return NextResponse.json(nested);
   } catch (err) {
     console.error("❌ Failed to fetch categories:", err);
