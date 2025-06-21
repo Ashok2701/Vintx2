@@ -34,12 +34,12 @@ export default function CategoryMenu() {
               className="flex items-center gap-1 hover:text-teal-300 transition-colors duration-200 py-3"
             >
               {main.name}
-              {main.children?.length > 0 && (
+              {main.children && main.children.length > 0 && (
                 <ChevronDown className="w-3 h-3 transition-transform duration-200 group-hover:rotate-180" />
               )}
             </Link>
 
-            {main.children?.length > 0 && (
+            {main.children && main.children.length > 0 && (
               <div className="absolute left-0 top-full bg-white text-gray-800 shadow-2xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 w-[800px] min-h-[400px]">
                 <div className="flex">
                   {/* Left Panel - Subcategories */}
@@ -84,13 +84,13 @@ export default function CategoryMenu() {
                     {hoveredSubCategory ? (
                       <div>
                         {(() => {
-                          const selectedSubCategory = main.children.find(sub => sub.id === hoveredSubCategory);
+                          const selectedSubCategory = main.children?.find(sub => sub.id === hoveredSubCategory);
                           return (
                             <div>
                               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                                 {selectedSubCategory?.name}
                               </h3>
-                              {selectedSubCategory?.children?.length > 0 ? (
+                              {selectedSubCategory?.children && selectedSubCategory.children.length > 0 ? (
                                 <div className="grid grid-cols-2 gap-x-8 gap-y-2">
                                   {selectedSubCategory.children.map(subSubCategory => (
                                     <Link
