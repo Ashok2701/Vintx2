@@ -27,6 +27,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     data: { views: { increment: 1 } },
   });
 
+  // ✅ Move server actions inside component and pass productId explicitly
   async function addToFavorite() {
     "use server";
     if (!userId) return redirect("/sign-in");
@@ -34,7 +35,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
     const exists = await prisma.favorite.findFirst({
       where: {
         userId,
-        productId: product.id,
+        productId: id, // ✅ Use id instead of product.id
       },
     });
 
@@ -42,12 +43,12 @@ export default async function ProductDetailPage({ params }: PageProps) {
       await prisma.favorite.create({
         data: {
           userId,
-          productId: product.id,
+          productId: id, // ✅ Use id instead of product.id
         },
       });
     }
 
-    revalidatePath(`/product/${product.id}`);
+    revalidatePath(`/product/${id}`); // ✅ Use id instead of product.id
   }
 
   async function buyNow() {
