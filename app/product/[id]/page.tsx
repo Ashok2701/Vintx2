@@ -5,22 +5,25 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-// ✅ This is the correct way to type the props
-export default async function ProductDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+// ✅ Updated type definition for Next.js 15+
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function ProductDetailPage({ params }: PageProps) {
   const { userId } = await auth();
+  
+  // ✅ Await the params in Next.js 15+
+  const { id } = await params;
 
   const product = await prisma.product.findUnique({
-    where: { id: params.id },
+    where: { id },
   });
 
   if (!product) return notFound();
 
   await prisma.product.update({
-    where: { id: params.id },
+    where: { id },
     data: { views: { increment: 1 } },
   });
 
