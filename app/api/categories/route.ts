@@ -10,8 +10,12 @@ type CategoryWithChildren = {
   parentId?: string | null;
   createdAt: Date;
   updatedAt: Date;
+  icon?: string | null;
   children: CategoryWithChildren[];
 };
+
+// ✅ Flat type from DB result
+type FlatCategory = Omit<CategoryWithChildren, "children">;
 
 // ✅ Recursive function to nest categories
 const buildTree = (
@@ -46,11 +50,16 @@ async function generateUniqueSlug(name: string): Promise<string> {
 // 📌 GET: Fetch categories as nested tree
 export async function GET() {
   try {
-    const flatCategories = (await prisma.category.findMany({
+    const flatCategories = await prisma.category.findMany({
       orderBy: { createdAt: "asc" },
-    })) as CategoryWithChildren[]; // safe cast to include children manually
+    }) as FlatCategory[];
 
-    const nested = buildTree(flatCategories);
+    const categoriesWithChildren: CategoryWithChildren[] = flatCategories.map(cat => ({
+      ...cat,
+      children: [],
+    }));
+
+    const nested = buildTree(categoriesWithChildren);
     return NextResponse.json(nested);
   } catch (err) {
     console.error("❌ Failed to fetch categories:", err);
