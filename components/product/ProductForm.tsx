@@ -144,7 +144,10 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
             setUploadedImages((prev) => [...prev, ...urls]);
             toast.success("Images uploaded!");
           }}
-          onUploadError={() => toast.error("Upload failed")}
+          onUploadError={(error) => {
+            console.error("Upload error:", error);
+            toast.error("Upload failed");
+          }}
           className="ut-upload-dropzone w-full ut-button:bg-teal-600"
         />
       </div>
