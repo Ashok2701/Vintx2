@@ -36,13 +36,13 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
     fetchCategories();
   }, []);
 
-  const findCategoryByPath = (path: string[]): Category[] => {
+  const findCategoryByPath = (path: string[]): Category[][] => {
     let currentLevel = categories;
     const levels: Category[][] = [currentLevel];
 
     for (const id of path) {
       const found = currentLevel.find((c) => c.id === id);
-      if (found && found.children && found.children?.length > 0) {
+      if (found && found.children && found.children.length > 0) {
         currentLevel = found.children;
         levels.push(currentLevel);
       } else {
@@ -78,7 +78,7 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
       body: JSON.stringify({
         ...form,
         price: parseFloat(form.price),
-        sellerId ,
+        sellerId,
         images: uploadedImages,
       }),
     });
