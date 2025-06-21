@@ -4,32 +4,17 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import ProductForm from "@/components/product/ProductForm";
 
-// ✅ Define the user type
-interface DbUser {
-  id: string;
-  clerkId: string;
-  email: string;
-  name?: string;
-  // Add other properties as needed based on your user schema
-}
-
-
-
-
 export default function SellPage() {
   const { user, isLoaded, isSignedIn } = useUser();
-    const [dbUser, setDbUser] = useState<DbUser | null>(null);
+    const [dbUser, setDbUser] = useState(null);
 
     
  useEffect(() => {
-    if (isLoaded && isSignedIn && user?.id) {
+    if (isLoaded && isSignedIn) {
       fetch(`/api/get-user-by-clerk-id?clerkId=${user.id}`)
         .then(res => res.json())
         .then(data => {
           if (!data.error) setDbUser(data);
-        })
-        .catch(error => {
-          console.error('Error fetching user:', error);
         });
     }
   }, [isLoaded, isSignedIn, user?.id]);
