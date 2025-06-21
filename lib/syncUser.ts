@@ -1,3 +1,5 @@
+import { prisma } from '@/lib/prisma';
+
 export async function syncUser(clerkId: string) {
   try {
     const existing = await prisma.user.findUnique({
