@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma';
 
-export async function syncUser(clerkId: string) {
+export async function syncUser(clerkId: string, email?: string, name?: string) {
   try {
     const existing = await prisma.user.findUnique({
       where: { clerkId },
@@ -10,6 +10,8 @@ export async function syncUser(clerkId: string) {
       await prisma.user.create({
         data: {
           clerkId,
+          email: email || 'user@example.com', // Provide a default email if none provided
+          name: name || 'User', // Provide a default name if none provided
           role: "member",
         },
       });
