@@ -42,7 +42,7 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
 
     for (const id of path) {
       const found = currentLevel.find((c) => c.id === id);
-      if (found && found.children?.length > 0) {
+      if (found && found.children && found.children?.length > 0) {
         currentLevel = found.children;
         levels.push(currentLevel);
       } else {
