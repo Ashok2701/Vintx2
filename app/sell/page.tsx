@@ -4,12 +4,20 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import ProductForm from "@/components/product/ProductForm";
 
+// Define the type for the database user
+interface DbUser {
+  id: string;
+  clerkId: string;
+  email: string;
+  name: string;
+  // Add other properties as needed based on your database schema
+}
+
 export default function SellPage() {
   const { user, isLoaded, isSignedIn } = useUser();
-    const [dbUser, setDbUser] = useState(null);
+  const [dbUser, setDbUser] = useState<DbUser | null>(null);
 
-    
- useEffect(() => {
+  useEffect(() => {
     if (isLoaded && isSignedIn) {
       fetch(`/api/get-user-by-clerk-id?clerkId=${user.id}`)
         .then(res => res.json())
@@ -19,8 +27,6 @@ export default function SellPage() {
     }
   }, [isLoaded, isSignedIn, user?.id]);
 
-
-
   if (!isLoaded) return <p>Loading...</p>;
 
   if (!isSignedIn || !user?.id) {
@@ -28,16 +34,14 @@ export default function SellPage() {
   }
 
   console.log("User details at Sell page", user);
-
-console.log("User details at dbuser ", dbUser);
+  console.log("User details at dbuser ", dbUser);
   
   if (!dbUser) return <p>Loading user info...</p>;
-
 
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Sell Your Product</h1>
-      <ProductForm sellerId={dbUser?.id} />
+      <ProductForm sellerId={dbUser.id} />
     </div>
   );
 }
