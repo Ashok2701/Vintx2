@@ -2,6 +2,8 @@ import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import ProductCard from "@/components/product/ProductCard";
 import HomeContent2 from "@/components/home/HomePage";
+import { getBaseUrl } from "@/lib/getBaseUrl";
+
 
 interface Product {
   id: string;
@@ -16,9 +18,9 @@ interface Product {
 export default async function HomePage() {
   const { userId } = await auth();
 
-  const res = await fetch("/api/products", {
-    cache: "no-store",
-  });
+
+const res = await fetch(`${getBaseUrl()}/api/products`, { cache: "no-store" });
+
 
 
   if (!res.ok) {

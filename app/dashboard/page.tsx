@@ -1,9 +1,11 @@
 import ProductListSection from "./ProductListSection";
+import { getBaseUrl } from "@/lib/getBaseUrl";
 
 async function getSellerProducts() {
-  const res = await fetch("/api/my-products", {
-    cache: "no-store",
-  });
+  
+  
+  const res = await fetch(`${getBaseUrl()}/api/products`, { cache: "no-store" });
+
   return res.json();
 }
 
