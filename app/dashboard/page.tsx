@@ -1,7 +1,7 @@
 import ProductListSection from "./ProductListSection";
 
 async function getSellerProducts() {
-  const res = await fetch("http://localhost:3000/api/my-products", {
+  const res = await fetch("/api/my-products", {
     cache: "no-store",
   });
   return res.json();
