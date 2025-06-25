@@ -38,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden">
         <Link href={`/products/${product.slug}`}>
           <Image
-            src={product.images[0] || "/placeholder-product.jpg"}
+            src={product.images[0] || "https://picsum.photos/400/400"}
             alt={product.name}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"

@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { slugify } from "@/lib/utils";
 
 export async function GET(req: Request) {
   try {
@@ -83,89 +81,6 @@ export async function GET(req: Request) {
     });
   } catch (error) {
     console.error("Products fetch error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-    });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const {
-      name,
-      description,
-      price,
-      comparePrice,
-      categoryId,
-      images,
-      inventory,
-      weight,
-      dimensions,
-      tags,
-    } = await req.json();
-
-    if (!name || !description || !price || !categoryId || !images?.length) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    const slug = slugify(name);
-    let uniqueSlug = slug;
-    let counter = 1;
-
-    // Ensure unique slug
-    while (await prisma.product.findUnique({ where: { slug: uniqueSlug } })) {
-      uniqueSlug = `${slug}-${counter}`;
-      counter++;
-    }
-
-    const product = await prisma.product.create({
-      data: {
-        name,
-        slug: uniqueSlug,
-        description,
-        price: parseFloat(price),
-        comparePrice: comparePrice ? parseFloat(comparePrice) : null,
-        images,
-        inventory: inventory || 0,
-        weight: weight ? parseFloat(weight) : null,
-        dimensions,
-        tags: tags || [],
-        sellerId: user.id,
-        categoryId,
-        status: "ACTIVE",
-      },
-      include: {
-        category: true,
-        seller: {
-          select: {
-            name: true,
-            avatar: true,
-          },
-        },
-      },
-    });
-
-    return NextResponse.json(product, { status: 201 });
-  } catch (error) {
-    console.error("Product creation error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

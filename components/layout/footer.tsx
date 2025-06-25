@@ -6,7 +6,6 @@ export function Footer() {
     <footer className="bg-muted/50 border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center space-x-2">
               <Store className="h-6 w-6 text-primary" />
@@ -31,7 +30,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Shop */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">Shop</h3>
             <ul className="space-y-2 text-sm">
@@ -58,7 +56,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">Support</h3>
             <ul className="space-y-2 text-sm">
@@ -85,7 +82,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Company */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">Company</h3>
             <ul className="space-y-2 text-sm">

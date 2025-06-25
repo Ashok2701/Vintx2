@@ -32,7 +32,6 @@ export function Navbar() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results
       window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
   };
@@ -41,13 +40,11 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Store className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">MarketPlace Pro</span>
           </Link>
 
-          {/* Search Bar */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -61,9 +58,7 @@ export function Navbar() {
             </div>
           </form>
 
-          {/* Navigation */}
           <nav className="flex items-center space-x-4">
-            {/* Mobile Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild className="md:hidden">
                 <Button variant="ghost" size="icon">
@@ -90,7 +85,6 @@ export function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               <Link
                 href="/products"
@@ -106,9 +100,7 @@ export function Navbar() {
               </Link>
             </div>
 
-            {/* User Actions */}
             <div className="flex items-center space-x-2">
-              {/* Favorites */}
               {isSignedIn && (
                 <Button variant="ghost" size="icon" asChild>
                   <Link href="/favorites">
@@ -117,7 +109,6 @@ export function Navbar() {
                 </Button>
               )}
 
-              {/* Cart */}
               <Button variant="ghost" size="icon" className="relative" asChild>
                 <Link href="/cart">
                   <ShoppingCart className="h-5 w-5" />
@@ -132,7 +123,6 @@ export function Navbar() {
                 </Link>
               </Button>
 
-              {/* Auth */}
               {isSignedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

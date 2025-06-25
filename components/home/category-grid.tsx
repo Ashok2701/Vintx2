@@ -1,39 +1,62 @@
-import { prisma } from "@/lib/prisma";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-async function getCategories() {
-  try {
-    const categories = await prisma.category.findMany({
-      where: {
-        parentId: null,
-      },
-      include: {
-        _count: {
-          select: {
-            products: true,
-          },
-        },
-      },
-      take: 6,
-      orderBy: {
-        name: "asc",
-      },
-    });
-
-    return categories;
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    return [];
-  }
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  _count: {
+    products: number;
+  };
 }
 
-export async function CategoryGrid() {
-  const categories = await getCategories();
+export function CategoryGrid() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.slice(0, 6));
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold tracking-tight">Shop by Category</h2>
+          <p className="text-muted-foreground mt-2">Loading categories...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (categories.length === 0) {
-    return null;
+    return (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold tracking-tight">Shop by Category</h2>
+          <p className="text-muted-foreground mt-2">No categories available</p>
+        </div>
+      </div>
+    );
   }
 
   return (

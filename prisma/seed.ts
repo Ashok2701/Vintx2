@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("🌱 Starting database seed...");
 
-  // Create categories
   const categories = [
     {
       name: "Electronics",
@@ -58,7 +57,6 @@ async function main() {
     }
   }
 
-  // Create sample products
   const sampleProducts = [
     {
       name: "iPhone 15 Pro",
@@ -66,8 +64,8 @@ async function main() {
       price: 999.99,
       comparePrice: 1099.99,
       images: [
-        "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=500",
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500",
+        "https://picsum.photos/400/400?random=1",
+        "https://picsum.photos/400/400?random=2",
       ],
       categoryName: "Smartphones",
       inventory: 50,
@@ -80,8 +78,8 @@ async function main() {
       price: 2499.99,
       comparePrice: 2699.99,
       images: [
-        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500",
-        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500",
+        "https://picsum.photos/400/400?random=3",
+        "https://picsum.photos/400/400?random=4",
       ],
       categoryName: "Laptops",
       inventory: 25,
@@ -94,8 +92,8 @@ async function main() {
       price: 399.99,
       comparePrice: 449.99,
       images: [
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
-        "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=500",
+        "https://picsum.photos/400/400?random=5",
+        "https://picsum.photos/400/400?random=6",
       ],
       categoryName: "Audio",
       inventory: 75,
@@ -108,8 +106,8 @@ async function main() {
       price: 89.99,
       comparePrice: 119.99,
       images: [
-        "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500",
-        "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=500",
+        "https://picsum.photos/400/400?random=7",
+        "https://picsum.photos/400/400?random=8",
       ],
       categoryName: "Men's Clothing",
       inventory: 100,
@@ -122,8 +120,8 @@ async function main() {
       price: 299.99,
       comparePrice: 399.99,
       images: [
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500",
-        "https://images.unsplash.com/photo-1541558869434-2840d308329a?w=500",
+        "https://picsum.photos/400/400?random=9",
+        "https://picsum.photos/400/400?random=10",
       ],
       categoryName: "Furniture",
       inventory: 30,
@@ -132,7 +130,6 @@ async function main() {
     },
   ];
 
-  // Create a demo user first
   const demoUser = await prisma.user.create({
     data: {
       clerkId: "demo_user_123",

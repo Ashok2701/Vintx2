@@ -5,6 +5,7 @@ import { slugify } from "@/lib/utils";
 export async function GET() {
   try {
     const categories = await prisma.category.findMany({
+      where: { parentId: null },
       include: {
         children: {
           include: {
@@ -51,7 +52,6 @@ export async function POST(req: Request) {
     let uniqueSlug = slug;
     let counter = 1;
 
-    // Ensure unique slug
     while (await prisma.category.findUnique({ where: { slug: uniqueSlug } })) {
       uniqueSlug = `${slug}-${counter}`;
       counter++;
