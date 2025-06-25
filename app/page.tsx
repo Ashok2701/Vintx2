@@ -2,7 +2,7 @@ import Image from "next/image";
 import { auth } from "@clerk/nextjs/server";
 import ProductCard from "@/components/product/ProductCard";
 import HomeContent2 from "@/components/home/HomePage";
-import { getBaseUrl } from "@/lib/getBaseUrl";
+import { GET } from "@/app/api/products/route";
 
 // Force dynamic rendering to provide request context for Clerk's auth()
 export const dynamic = 'force-dynamic';
@@ -20,28 +20,23 @@ interface Product {
 export default async function HomePage() {
   const { userId } = await auth();
 
+  // Call the API handler directly instead of using fetch
+  const response = await GET();
+  
+  if (!response.ok) {
+    const text = await response.text();
+    console.error("API Error:", text);
+    throw new Error("Failed to load products");
+  }
 
-const res = await fetch(`${getBaseUrl()}/api/products`, { cache: "no-store" });
-
-
-
-  if (!res.ok) {
-  const text = await res.text();
-  console.error("API Error:", text);
-  throw new Error("Failed to load products");
-}
-
-  const products: Product[] = await res.json();
+  const products: Product[] = await response.json();
 
   console.log("user details are ", userId)
-  console.log("Prpducts data  =", products)
+  console.log("Products data  =", products)
 
-
-if (products.length === 0) {
-  return <p className="text-center text-gray-500 mt-10">No products available yet.</p>;
-}
-
-
+  if (products.length === 0) {
+    return <p className="text-center text-gray-500 mt-10">No products available yet.</p>;
+  }
 
   return (
     <div className="w-full">
