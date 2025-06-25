@@ -11,15 +11,38 @@ type Props = {
 };
 
 export default function ProductListSection({ products }: Props) {
-  const { user, isSignedIn } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    const role = user?.publicMetadata?.role;
-    if (isSignedIn && role === "admin") {
-      router.replace("/admin");
+    if (isLoaded && isSignedIn) {
+      const role = user?.publicMetadata?.role;
+      if (role === "admin") {
+        router.replace("/admin");
+      }
     }
-  }, [isSignedIn, user, router]);
+  }, [isSignedIn, user, router, isLoaded]);
+
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!isSignedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-lg mb-4">Please sign in to view your dashboard.</p>
+          <a href="/sign-in" className="text-teal-600 hover:underline">
+            Sign in here
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const sellerId = user?.id;
 
@@ -31,12 +54,15 @@ export default function ProductListSection({ products }: Props) {
         {products?.length > 0 ? (
           products.map((p: any) => <ProductCard key={p.id} product={p} />)
         ) : (
-          <p>No products found.</p>
+          <div className="col-span-full text-center py-8">
+            <p className="text-gray-500 mb-4">No products found.</p>
+            <p className="text-sm text-gray-400">Create your first product below!</p>
+          </div>
         )}
       </div>
 
       <hr className="my-10" />
-      <h2 className="text-xl font-semibold mb-2">Add New Product</h2>
+      <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
 
       {sellerId ? (
         <ProductForm sellerId={sellerId} />

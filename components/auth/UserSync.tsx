@@ -10,13 +10,24 @@ export default function UserSync() {
     if (typeof window === "undefined") return;
 
     if (isLoaded && user) {
-      fetch("/api/sync-user", {
-        method: "POST",
-        body: JSON.stringify({
-          clerkId: user.id,
-          email: user.primaryEmailAddress?.emailAddress || "",
-        }),
-      });
+      const syncUser = async () => {
+        try {
+          await fetch("/api/sync-user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              clerkId: user.id,
+              email: user.primaryEmailAddress?.emailAddress || "",
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to sync user:", error);
+        }
+      };
+
+      syncUser();
     }
   }, [isLoaded, user]);
 

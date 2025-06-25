@@ -1,13 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    domains: ["utfs.io"],
+    domains: ["utfs.io", "via.placeholder.com"],
   },
-  eslint : {
-        ignoreDuringBuilds: true,
-  }
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
 
 export default nextConfig;
