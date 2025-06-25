@@ -16,7 +16,15 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link href={`/product/${product.id}`}>
       <Card className="hover:shadow-md transition-shadow duration-200">
         <CardHeader className="p-0">
-          
+           <div className="relative w-full h-48">
+            <Image
+              src={firstImage}
+              alt={product.name}
+              fill
+              className="object-cover rounded-t-lg"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            />
+          </div>
         </CardHeader>
 
         <CardContent className="p-4">
