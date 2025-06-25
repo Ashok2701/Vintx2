@@ -4,6 +4,8 @@ import ProductCard from "@/components/product/ProductCard";
 import HomeContent2 from "@/components/home/HomePage";
 import { getBaseUrl } from "@/lib/getBaseUrl";
 
+// Force dynamic rendering to provide request context for Clerk's auth()
+export const dynamic = 'force-dynamic';
 
 interface Product {
   id: string;
