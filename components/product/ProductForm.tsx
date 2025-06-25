@@ -26,12 +26,18 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const res = await fetch("/api/categories");
-      const data = await res.json();
-      setCategories(data);
+      try {
+        const res = await fetch("/api/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+        toast.error("Failed to load categories");
+      }
     };
     fetchCategories();
   }, []);
@@ -61,31 +67,51 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
-    if (!form.name || !form.price || !form.categoryId) {
-      toast.error("Please fill all fields");
-      return;
+    try {
+      if (!form.name || !form.price) {
+        toast.error("Please fill in name and price");
+        return;
+      }
+
+      if (uploadedImages.length === 0) {
+        toast.error("Please upload at least one image");
+        return;
+      }
+
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          price: parseFloat(form.price),
+          sellerId,
+          images: uploadedImages,
+        }),
+      });
+
+      if (res.ok) {
+        toast.success("Product created successfully!");
+        // Reset form
+        setForm({
+          name: "",
+          description: "",
+          price: "",
+          categoryId: "",
+        });
+        setSelectedPath([]);
+        setUploadedImages([]);
+      } else {
+        const error = await res.json();
+        toast.error(error.error || "Failed to create product");
+      }
+    } catch (error) {
+      console.error("Submit error:", error);
+      toast.error("Failed to create product");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (uploadedImages.length === 0) {
-      toast.error("Please upload at least one image");
-      return;
-    }
-
-
-    const res = await fetch("/api/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        price: parseFloat(form.price),
-        sellerId,
-        images: uploadedImages,
-      }),
-    });
-
-    if (res.ok) toast.success("Product created!");
-    else toast.error("Failed to create product");
   };
 
   const renderCategoryDropdowns = () => {
@@ -127,17 +153,22 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
 
       <Input
         type="number"
+        step="0.01"
         placeholder="Price"
         value={form.price}
         onChange={(e) => setForm({ ...form, price: e.target.value })}
         required
       />
 
-      {/* 🧩 Category Selection */}
-      <div>{renderCategoryDropdowns()}</div>
-
-      {/* 📷 Upload Images */}
+      {/* Category Selection */}
       <div>
+        <label className="block text-sm font-medium mb-2">Category</label>
+        {renderCategoryDropdowns()}
+      </div>
+
+      {/* Upload Images */}
+      <div>
+        <label className="block text-sm font-medium mb-2">Images</label>
         <UploadButton
           endpoint="productImage"
           onClientUploadComplete={(res) => {
@@ -156,20 +187,32 @@ export default function ProductForm({ sellerId }: { sellerId: string }) {
       {uploadedImages.length > 0 && (
         <div className="flex flex-wrap gap-3 mt-3">
           {uploadedImages.map((src, idx) => (
-            <Image
-              key={idx}
-              src={src}
-              alt={`Image ${idx}`}
-              width={100}
-              height={100}
-              className="rounded border"
-            />
+            <div key={idx} className="relative">
+              <Image
+                src={src}
+                alt={`Image ${idx}`}
+                width={100}
+                height={100}
+                className="rounded border"
+              />
+              <button
+                type="button"
+                onClick={() => setUploadedImages(prev => prev.filter((_, i) => i !== idx))}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+              >
+                ×
+              </button>
+            </div>
           ))}
         </div>
       )}
 
-      <Button type="submit" className="bg-teal-700 text-white w-full">
-        Create Product
+      <Button 
+        type="submit" 
+        className="bg-teal-700 text-white w-full"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Creating..." : "Create Product"}
       </Button>
     </form>
   );

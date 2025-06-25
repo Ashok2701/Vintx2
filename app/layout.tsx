@@ -6,7 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/shared/Navbar";
 import CategoryMenu from "@/components/shared/CategoryMenu";
 import { Toaster } from 'sonner';
-
+import UserSync from "@/components/auth/UserSync";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vintx - Curate your closet.Sustain your style ",
-  description: "Application",
+  title: "Vintx - Curate your closet. Sustain your style",
+  description: "Sustainable fashion marketplace",
 };
 
 export default function RootLayout({
@@ -30,18 +30,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-  <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Navbar />
-        <CategoryMenu />
-        {children}
-                <Toaster position="top-right" richColors />
-
-      </body>
-    </html>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <UserSync />
+          <Navbar />
+          <CategoryMenu />
+          {children}
+          <Toaster position="top-right" richColors />
+        </body>
+      </html>
     </ClerkProvider>
-  
   );
 }
