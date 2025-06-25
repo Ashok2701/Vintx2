@@ -8,75 +8,213 @@ datasource db {
 }
 
 model User {
-  id      String  @id @default(cuid())
-  clerkId String  @unique
-  email   String  @unique
-  role    String  @default("member")
-  name    String?
-  image   String?
-
-  products Product[] @relation("SellerRelation") // ✅ Matches Product.seller
-  orders   Order[]   @relation("BuyerRelation") // ✅ Matches Order.buyer
-
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  avatar    String?
+  role      Role     @default(USER)
+  verified  Boolean  @default(false)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  products   Product[]
+  orders     Order[]
+  reviews    Review[]
+  favorites  Favorite[]
+  addresses  Address[]
+  cart       CartItem[]
+
+  @@map("users")
 }
 
 model Category {
-  id       String     @id @default(cuid())
-  name     String
-  slug     String     @unique
-  gender   String?
-  parentId String?
-  parent   Category?  @relation("CategoryToSub", fields: [parentId], references: [id])
-  children Category[] @relation("CategoryToSub")
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  image       String?
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-  products Product[] @relation("CategoryToProduct") // ✅ Bidirectional
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("categories")
 }
-
-model Favorite {
-  id        String   @id @default(cuid())
-  userId    String
-  productId String
-  createdAt DateTime @default(now())
-
-  product   Product  @relation(fields: [productId], references: [id])
-}
-
-
-
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
+  slug        String        @unique
   description String
   price       Float
+  comparePrice Float?
   images      String[]
-  views      Int      @default(0)
-  favorites  Favorite[]
-  sellerId String
-  seller   User   @relation("SellerRelation", fields: [sellerId], references: [id]) // ✅ Matches User.products
-
+  status      ProductStatus @default(DRAFT)
+  featured    Boolean       @default(false)
+  inventory   Int           @default(0)
+  weight      Float?
+  dimensions  String?
+  tags        String[]
+  views       Int           @default(0)
+  
+  sellerId   String
+  seller     User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   categoryId String
-  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id]) // ✅ Matches Category.products
+  category   Category @relation(fields: [categoryId], references: [id])
 
-  orders Order[] @relation("ProductOrders") // ✅ Matches Order.product
+  // Relations
+  orderItems OrderItem[]
+  reviews    Review[]
+  favorites  Favorite[]
+  cartItems  CartItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("products")
 }
 
 model Order {
-  id String @id @default(cuid())
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique
+  status        OrderStatus @default(PENDING)
+  total         Float
+  subtotal      Float
+  tax           Float       @default(0)
+  shipping      Float       @default(0)
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentMethod String?
+  stripePaymentIntentId String?
+  
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  productId String
-  product   Product @relation("ProductOrders", fields: [productId], references: [id]) // ✅ Matches Product.orders
-price  Float    // <-- Add this if missing or change to Float/Int
-  status String
-  buyerId String
-  buyer   User   @relation("BuyerRelation", fields: [buyerId], references: [id]) // ✅ Matches User.orders
+  // Relations
+  items     OrderItem[]
+  address   Address?    @relation(fields: [addressId], references: [id])
+  addressId String?
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id       String @id @default(cuid())
+  quantity Int
+  price    Float
+
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model Review {
+  id      String @id @default(cuid())
+  rating  Int
+  comment String?
+  
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+  @@map("reviews")
+}
+
+model Favorite {
+  id String @id @default(cuid())
+  
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@map("favorites")
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  firstName  String
+  lastName   String
+  company    String?
+  address1   String
+  address2   String?
+  city       String
+  state      String
+  postalCode String
+  country    String
+  phone      String?
+  isDefault  Boolean @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Relations
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("addresses")
+}
+
+model CartItem {
+  id       String @id @default(cuid())
+  quantity Int
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SELLER
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }

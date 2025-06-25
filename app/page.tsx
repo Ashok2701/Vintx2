@@ -1,60 +1,42 @@
-import Image from "next/image";
-import { auth } from "@clerk/nextjs/server";
-import ProductCard from "@/components/product/ProductCard";
-import HomeContent2 from "@/components/home/HomePage";
-import { GET } from "@/app/api/products/route";
+import { Suspense } from "react";
+import { HeroSection } from "@/components/home/hero-section";
+import { FeaturedProducts } from "@/components/home/featured-products";
+import { CategoryGrid } from "@/components/home/category-grid";
+import { NewsletterSection } from "@/components/home/newsletter-section";
+import { ProductCardSkeleton } from "@/components/ui/product-card-skeleton";
 
-// Force dynamic rendering to provide request context for Clerk's auth()
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  images: string[];
-  category?: { name: string };
-  createdAt: string;
-}
-
-export default async function HomePage() {
-  const { userId } = await auth();
-
-  // Call the API handler directly instead of using fetch
-  const response = await GET();
-  
-  if (!response.ok) {
-    const text = await response.text();
-    console.error("API Error:", text);
-    throw new Error("Failed to load products");
-  }
-
-  const products: Product[] = await response.json();
-
-  console.log("user details are ", userId)
-  console.log("Products data  =", products)
-
-  if (products.length === 0) {
-    return <p className="text-center text-gray-500 mt-10">No products available yet.</p>;
-  }
-
+export default function HomePage() {
   return (
-    <div className="w-full">
-      {/* ✅ Full-width banner */}
-      <HomeContent2 />
-      {/* ✅ Section Title */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <h2 className="text-2xl font-bold mb-4">
-          {userId ? "Latest Products" : "Featured Products"}
-        </h2>
+    <div className="space-y-16">
+      <HeroSection />
+      
+      <section className="container mx-auto px-4">
+        <CategoryGrid />
+      </section>
 
-        {/* ✅ Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+      <section className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
+          <p className="text-muted-foreground mt-2">
+            Discover our handpicked selection of premium products
+          </p>
         </div>
-      </div>
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          }
+        >
+          <FeaturedProducts />
+        </Suspense>
+      </section>
+
+      <NewsletterSection />
     </div>
   );
 }

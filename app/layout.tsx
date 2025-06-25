@@ -1,44 +1,42 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "@uploadthing/react/styles.css";
+import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import Navbar from "@/components/shared/Navbar";
-import CategoryMenu from "@/components/shared/CategoryMenu";
-import { Toaster } from 'sonner';
-import UserSync from "@/components/auth/UserSync";
+import { Toaster } from "@/components/ui/toaster";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import { UserSync } from "@/components/auth/user-sync";
+import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Vintx - Curate your closet. Sustain your style",
-  description: "Sustainable fashion marketplace",
+  title: "MarketPlace Pro - Premium E-commerce Platform",
+  description: "A modern, scalable e-commerce marketplace built with Next.js 15",
+  keywords: ["ecommerce", "marketplace", "shopping", "nextjs", "react"],
+  authors: [{ name: "MarketPlace Pro Team" }],
+  openGraph: {
+    title: "MarketPlace Pro",
+    description: "Premium E-commerce Platform",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+      <html lang="en" suppressHydrationWarning>
+        <body className={inter.className}>
           <UserSync />
-          <Navbar />
-          <CategoryMenu />
-          {children}
-          <Toaster position="top-right" richColors />
+          <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>
